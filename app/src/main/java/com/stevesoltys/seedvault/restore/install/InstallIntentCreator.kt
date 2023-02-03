@@ -11,13 +11,19 @@ internal class InstallIntentCreator(
     private val packageManager: PackageManager,
 ) {
 
-    private val installerToPackage = mapOf(
-        "org.fdroid.fdroid" to "org.fdroid.fdroid",
-        "org.fdroid.fdroid.privileged" to "org.fdroid.fdroid",
-        "com.aurora.store" to "com.aurora.store",
-        "com.aurora.services" to "com.aurora.store",
-        "com.android.vending" to "com.android.vending"
-    )
+    private val installerToPackage = buildMap() {
+        put("org.fdroid.fdroid", "org.fdroid.fdroid")
+        put("org.fdroid.fdroid.privileged", "org.fdroid.fdroid")
+        put("com.aurora.store", "com.aurora.store")
+        put("com.aurora.services", "com.aurora.store")
+        put(
+            "com.android.vending",
+            if (packageManager.isInstalled("com.aurora.store"))
+                "com.aurora.store"
+            else "com.android.vending"
+        )
+    }
+
     private val isPackageInstalled = HashMap<String, Boolean>()
 
     fun getIntent(packageName: CharSequence, installerPackageName: CharSequence?): Intent {
